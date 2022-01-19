@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Loan";
+}
+@model LoanApplication
+
+ <div class="col-md-4">
+    <h2>Apply for a loan</h2>
+    <form asp-controller="Loan" asp-action="Index" method="post" enctype="multipart/form-data">
+        <table cellpadding="2" cellspacing="2">
+            <tr class="form-group">
+                <td>Address of Property</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="Address" />
+                     <span asp-validation-for="Address" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>Requested Loan Amount</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="LoanAmount" />
+                     <span asp-validation-for="LoanAmount" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>&nbsp;</td>
+                <td><input class="form-control" type="submit" value="Submit" /></td>
+            </tr>
+           
+        </table>
+        <h5>@ViewBag.LoanMessage</h5>
+    </form>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

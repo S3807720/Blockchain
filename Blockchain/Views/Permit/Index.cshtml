@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model Property
+
+<h2>Apply for a permit</h2>
+<p>To apply for a permit, please enter the below form and wait for approval.</p>
+ <div class="col-md-8">
+
+    <form asp-controller="Permit" asp-action="Index" method="post" enctype="multipart/form-data">
+        <table cellpadding="2" cellspacing="2">
+            <tr class="form-group">
+                <td>Address</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="Address" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>Owner</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="OwnerDetails" />
+                    <span asp-validation-for="OwnerDetails" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>License</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="SellerLicense" />
+                    <span asp-validation-for="SellerLicense" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>Price</td>
+                <td>
+                    <input type="text" class="form-control" asp-for="Price" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>Building Design</td>
+                <td>
+                    <input class="form-control" type="file" name="files" />
+                    <span asp-validation-for="BuildingDesign" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="form-group">
+                <td>&nbsp;</td>
+                <td><input class="form-control" type="submit" value="Submit" /></td>
+            </tr>
+           
+        </table>
+        <h5>@ViewBag.SuccessMessage</h5>
+    </form>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

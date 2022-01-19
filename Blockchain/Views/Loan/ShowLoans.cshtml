@@ -1,0 +1,74 @@
+﻿@model List<LoanApplication>
+@{
+    ViewData["Title"] = "List of Loans";
+    var approval = "";
+}
+
+
+<div>
+
+    <h3 class="text-center p-3">Loans</h3>
+     <div class="input-group">
+
+    </div>
+    <table class="table">
+        <tr class="row justify-content-md-center text-white">
+            <th class="col">@Html.DisplayNameFor(x => x[0].BCApplicationID)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.Name)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.DOB)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.Address)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.Employer)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.AnnualIncome)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Address)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].LoanAmount)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Decision)</th>
+        </tr>
+        
+        @foreach (var loan in Model)
+        {
+            <tr class="row justify-content-md-center text-white">
+                <td class="col">@Html.DisplayFor(x => loan.BCApplicationID)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Buyer.Name)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Buyer.DOB)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Buyer.Address)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Buyer.Employer)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Buyer.AnnualIncome)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Address)</td>
+                <td class="col">@Html.DisplayFor(x => loan.LoanAmount)</td>
+                <td class="col">
+                @{
+                    if(loan.Decision != null){
+                        approval = loan.Decision == true ? "Approved" : "Rejected";
+                        @approval
+                    } else
+                    {
+                       <div class="btn-group">
+                           <form asp-controller="Loan" asp-action="ApproveLoan" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="BCApplicationID" value="@loan.BCApplicationID" />
+                                <input type="hidden" name="BuyerID" value="@loan.Buyer.UserID" />
+                                <input class="btn btn-primary btn-sm" type="submit" value="Approve" />
+                            </form>
+                            <form asp-controller="Loan" asp-action="RejectLoan" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="BCApplicationID" value="@loan.BCApplicationID" />
+                                <input type="hidden" name="BuyerID" value="@loan.Buyer.UserID" />
+                                <input class="btn btn-primary btn-sm" type="submit" value="Reject" />
+                            </form>
+                        </div>
+                    }
+                }
+                </td>
+ 
+            </tr>
+        }
+
+
+
+
+    
+    </table>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

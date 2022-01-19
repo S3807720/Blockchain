@@ -1,0 +1,68 @@
+﻿@model List<PermitApplication>
+@{
+    ViewData["Title"] = "List of Permits";
+    var approval = "";
+}
+
+
+<div>
+
+    <h3 class="text-center p-3">Permits</h3>
+     <div class="input-group">
+
+    </div>
+    <table class="table">
+        <tr class="row justify-content-md-center text-white">
+            <th class="col">@Html.DisplayNameFor(x => x[0].BCApplicationID)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Property.Address)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Property.OwnerDetails)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Property.SellerLicense)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Property.BuildingDesign)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Decision)</th>
+        </tr>
+        
+        @foreach (var permit in Model)
+        {
+            <tr class="row justify-content-md-center text-white">
+                <td class="col">@Html.DisplayFor(x => permit.BCApplicationID)</td>
+                <td class="col">@Html.DisplayFor(x => permit.Property.Address)</td>
+                <td class="col">@Html.DisplayFor(x => permit.Property.OwnerDetails)</td>
+                <td class="col">@Html.DisplayFor(x => permit.Property.SellerLicense)</td>
+                <td class="col">@Html.DisplayFor(x => permit.Property.BuildingDesign.Name)</td>
+                <td class="col">
+                @{
+                    if(permit.Decision != null){
+                        approval = permit.Decision == true ? "Approved" : "Rejected";
+                        @approval
+                    } else
+                    {
+                       <div class="btn-group">
+                           <form asp-controller="Permit" asp-action="ApprovePermit" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="BCApplicationID" value="@permit.BCApplicationID" />
+                            <input type="hidden" name="PropertyID" value="@permit.Property.PropertyID" />
+                            <input class="btn btn-primary btn-sm" type="submit" value="Approve" />
+                            </form>
+                            <form asp-controller="Permit" asp-action="RejectPermit" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="BCApplicationID" value="@permit.BCApplicationID" />
+                                <input type="hidden" name="PropertyID" value="@permit.Property.PropertyID" />
+                                <input class="btn btn-primary btn-sm" type="submit" value="Reject" />
+                            </form>
+                        </div>
+                    }
+                }
+                </td>
+ 
+            </tr>
+        }
+
+
+
+
+    
+    </table>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
