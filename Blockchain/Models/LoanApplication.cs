@@ -9,8 +9,12 @@ namespace Blockchain.Models
         public string Address { get; set; }
         [Required, DataType(DataType.Currency)]
         [Column(TypeName = "money")]
+        [Display(Name = "Loan Amount")]
         public decimal LoanAmount { get; set; }
+        [Display(Name = "Action")]
         public bool? Decision { get; set; }
+        [Display(Name = "Permit Status")]
+        public bool? PermitStatus { get; set; }
 
     }
     

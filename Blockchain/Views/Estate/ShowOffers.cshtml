@@ -1,0 +1,64 @@
+﻿@model List<OfferViewModel>
+@{
+    ViewData["Title"] = "List of Offers";
+    var approval = "";
+}
+
+
+<div>
+
+    <h3 class="text-center p-3">List of Property Buy Offers</h3>
+     <div class="input-group">
+
+    </div>
+    <table class="table">
+        <tr class="row justify-content-md-center text-white">
+            <th class="col">Buyer</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Address)</th>
+            <th class="col">Loan Status</th>
+            <th class="col">Action</th>
+        </tr>
+        
+        @foreach (var loan in Model)
+        {
+            <tr class="row justify-content-md-center text-white">
+                <td class="col">@Html.DisplayFor(x => loan.Buyers)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Address)</td>
+                <td class="col">
+                    @{
+                        if(loan.Loan.Approved != null){
+                            approval = loan.Loan.Approved == true ? "Approved" : "Rejected";
+
+                        } else
+                        {
+                            approval = "Unconfirmed";
+                        }
+                    @approval
+                }
+                </td>
+                <td class="col">
+                   <div class="btn-group">
+                        <form asp-controller="Estate" asp-action="AcceptOffer" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="BCApplicationID" value="@loan.PendingTransactionID" />
+                            <input class="btn btn-primary btn-sm" type="submit" value="Approve" />
+                        </form>
+                        <form asp-controller="Estate" asp-action="RejectOffer" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="BCApplicationID" value="@loan.PendingTransactionID" />
+                            <input class="btn btn-primary btn-sm" type="submit" value="Reject" />
+                        </form>
+                    </div>
+              </td>
+            </tr>
+        }
+
+
+
+
+    
+    </table>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

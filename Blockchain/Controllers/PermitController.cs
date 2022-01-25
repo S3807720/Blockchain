@@ -33,9 +33,10 @@ namespace Blockchain.Controllers
         ValueLengthLimit = int.MaxValue)]
         public IActionResult Index(Property property, IFormFile files)
         {
-          //  if (property == null) { ModelState.AddModelError("Submit", "Fields cannot be empty."); return View(property); }
-          //  if (!ModelState.IsValid) { return View(property); }
-           // if (files == null || files.Length == 0) { ModelState.AddModelError("BuildingDesign", "You must upload a building design."); return View(property); }
+            if (property == null) { ModelState.AddModelError("Address", "Property details must be completed."); return View(property); }
+            if (property.Price <= 0) { ModelState.AddModelError("Price", "Price must be more than $0."); return View(property); }
+            if (files == null || files.Length == 0) { ModelState.AddModelError("BuildingDesign", "You must upload a building design."); return View(property); }
+       //     if (!ModelState.IsValid) { return View(property); }
 
             //Getting FileName
             var fileName = Path.GetFileName(files.FileName);
@@ -62,7 +63,7 @@ namespace Blockchain.Controllers
             _context.SaveChanges();
             BlockChainUtility.Use
                 (_context.Permits.OrderByDescending(x => x.BCApplicationID).FirstOrDefault());
-            ViewBag.SuccessMessage = "Permit successfully received.";
+            ViewBag.SuccessMessage = $"Permit application #{_context.Permits.OrderByDescending(x => x.BCApplicationID).FirstOrDefault().BCApplicationID} successfully received. ";
             ModelState.Clear();
             return View();
         }
@@ -115,6 +116,7 @@ namespace Blockchain.Controllers
             _context.SaveChanges();
             BlockChainUtility.Use
                 (_context.PermitDecisions.OrderByDescending(x => x.BCApplicationID).FirstOrDefault());
+            BlockChainUtility.Mine();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

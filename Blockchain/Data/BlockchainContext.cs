@@ -20,6 +20,8 @@ namespace Blockchain.Data
         public DbSet<PermitDecision> PermitDecisions { get; set;}
         public DbSet<Property> Properties { get; set; } 
         public DbSet<BCFile> Files { get; set; }
+        public DbSet<PendingTransaction> PendingTransactions { get; set; }
+        public DbSet<TransactionDecision> TransactionDecisions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -48,10 +48,11 @@ namespace Blockchain.Models
         {
             using (SHA256 sha256 = SHA256.Create())
             {
-                string rawData = PreviousHash + _timeStamp + Transactions + _nonce;
+                string rawData = PreviousHash + _timeStamp + _nonce;
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawData));
                 return Encoding.Default.GetString(bytes);
             }
+
         }
 
         [field: NonSerialized()]

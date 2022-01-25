@@ -1,7 +1,6 @@
 ﻿using Blockchain.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 
 namespace Blockchain
 {
@@ -10,6 +9,34 @@ namespace Blockchain
         public static BlockChain _chain = new BlockChain(2);
         private const string FileName = @"../SavedChain.json";
 
+        public static IEnumerable<T> Clone<T>(this IEnumerable<T> target) where T : ICloneable
+        {
+            if(target == null)
+                return null;
+
+            List<T> retVal = new List<T>();
+
+            foreach (T currentItem in target)
+                retVal.Add((T)(currentItem.Clone()));
+
+            return retVal.AsEnumerable();
+        }
+
+
+        public static BlockChain TempChain()
+        {
+            BlockChain temp = new BlockChain();
+            if (System.IO.File.Exists(FileName))
+            {
+                using (StreamReader file = File.OpenText(FileName))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.TypeNameHandling= TypeNameHandling.Auto;
+                    temp = (BlockChain)serializer.Deserialize(file, typeof(BlockChain));
+                }
+            }
+            return temp;
+        }
         public static void Use(BCApplication app)
         {
             Load();
@@ -17,6 +44,22 @@ namespace Blockchain
             Save();
         }
 
+        public static async void VerifyIntegrity()
+        {
+            if (!_chain.IsValidChain())
+            {
+                Console.Error.WriteLine("Blockchain integrity is invalid!");
+            } else
+            {
+                Console.WriteLine("Blockchain integrity is OK");
+            }
+        }
+
+        public static void Mine()
+        {
+            _chain.MineBlock();
+            Save();
+        }
         public static void Save()
         {
             JsonSerializer serializer = new JsonSerializer();
@@ -40,7 +83,7 @@ namespace Blockchain
                     serializer.TypeNameHandling= TypeNameHandling.Auto;
                     _chain = (BlockChain)serializer.Deserialize(file, typeof(BlockChain));
                 }
-            }
+            } // if no file exists, initialize and create
             else
             {
 

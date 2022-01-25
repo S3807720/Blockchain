@@ -1,0 +1,59 @@
+﻿@model List<Property>
+@{
+    ViewData["Title"] = "Properties";
+}
+
+
+<div>
+
+    <h3 class="text-center p-3">Properties </h3>
+     <div class="input-group">
+         
+    </div>
+     <h5 class="text-align-content-center p-3"> @ViewBag.Offer</h5>
+    <table class="table">
+        <tr class="row justify-content-md-center text-white">
+            <th class="col">@Html.DisplayNameFor(x => x[0].Address)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].OwnerDetails)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].BuildingDesign.Name)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].SellerLicense)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].Price)</th>
+            <th class="col"></th>
+        </tr>
+        
+        @foreach (var prop in Model)
+        {
+            <tr class="row justify-content-md-center text-white">
+                <td class="col">@Html.DisplayFor(x => prop.Address)</td>
+                <td class="col">@Html.DisplayFor(x => prop.OwnerDetails)</td>
+                <td class="col">@Html.DisplayFor(x => prop.BuildingDesign.Name)</td>
+                <td class="col">@Html.DisplayFor(x => prop.SellerLicense)</td>
+                <td class="col">@Html.DisplayFor(x => prop.Price)</td>
+                <td class="col">
+                @{
+                    <div class="btn-group">
+                        <form asp-controller="Estate" asp-action="Offer" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="PropertyID" value="@prop.PropertyID" />
+                            <input type="hidden" name="BuyerID" value="2" />
+                            <input class="btn btn-primary btn-sm" type="submit" value="Send Offer" />
+                        </form>
+                    </div>
+                
+                }
+                </td>
+ 
+            </tr>
+           
+        }
+
+
+
+
+    
+    </table>
+</div>
+        
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

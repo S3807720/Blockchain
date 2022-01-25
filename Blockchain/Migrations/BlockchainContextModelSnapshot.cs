@@ -187,6 +187,9 @@ namespace Blockchain.Migrations
                     b.Property<decimal>("LoanAmount")
                         .HasColumnType("money");
 
+                    b.Property<bool?>("PermitStatus")
+                        .HasColumnType("bit");
+
                     b.HasIndex("BuyerUserID");
 
                     b.HasDiscriminator().HasValue("LoanApplication");
@@ -211,22 +214,33 @@ namespace Blockchain.Migrations
                     b.HasDiscriminator().HasValue("LoanDecision");
                 });
 
-            modelBuilder.Entity("Blockchain.Models.PermitApplication", b =>
+            modelBuilder.Entity("Blockchain.Models.PendingTransaction", b =>
                 {
                     b.HasBaseType("Blockchain.Models.BCApplication");
 
-                    b.Property<int?>("BuyerUserID")
-                        .HasColumnType("int")
-                        .HasColumnName("PermitApplication_BuyerUserID");
+                    b.Property<bool?>("Accepted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("BuyerID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyID")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("PendingTransaction");
+                });
+
+            modelBuilder.Entity("Blockchain.Models.PermitApplication", b =>
+                {
+                    b.HasBaseType("Blockchain.Models.BCApplication");
 
                     b.Property<bool?>("Decision")
                         .HasColumnType("bit")
                         .HasColumnName("PermitApplication_Decision");
 
                     b.Property<int>("PropertyID")
-                        .HasColumnType("int");
-
-                    b.HasIndex("BuyerUserID");
+                        .HasColumnType("int")
+                        .HasColumnName("PermitApplication_PropertyID");
 
                     b.HasIndex("PropertyID");
 
@@ -259,6 +273,20 @@ namespace Blockchain.Migrations
                     b.HasDiscriminator().HasValue("Seller");
                 });
 
+            modelBuilder.Entity("Blockchain.Models.TransactionDecision", b =>
+                {
+                    b.HasBaseType("Blockchain.Models.BCApplication");
+
+                    b.Property<bool?>("Accepted")
+                        .HasColumnType("bit")
+                        .HasColumnName("TransactionDecision_Accepted");
+
+                    b.Property<int>("PendingTransactionsID")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("TransactionDecision");
+                });
+
             modelBuilder.Entity("Blockchain.Models.Login", b =>
                 {
                     b.HasOne("Blockchain.Models.BCUser", "User")
@@ -288,7 +316,7 @@ namespace Blockchain.Migrations
             modelBuilder.Entity("Blockchain.Models.LoanApplication", b =>
                 {
                     b.HasOne("Blockchain.Models.Buyer", "Buyer")
-                        .WithMany("Loans")
+                        .WithMany()
                         .HasForeignKey("BuyerUserID");
 
                     b.Navigation("Buyer");
@@ -305,10 +333,6 @@ namespace Blockchain.Migrations
 
             modelBuilder.Entity("Blockchain.Models.PermitApplication", b =>
                 {
-                    b.HasOne("Blockchain.Models.Buyer", null)
-                        .WithMany("Permits")
-                        .HasForeignKey("BuyerUserID");
-
                     b.HasOne("Blockchain.Models.Property", "Property")
                         .WithMany()
                         .HasForeignKey("PropertyID")
@@ -316,13 +340,6 @@ namespace Blockchain.Migrations
                         .IsRequired();
 
                     b.Navigation("Property");
-                });
-
-            modelBuilder.Entity("Blockchain.Models.Buyer", b =>
-                {
-                    b.Navigation("Loans");
-
-                    b.Navigation("Permits");
                 });
 
             modelBuilder.Entity("Blockchain.Models.Seller", b =>

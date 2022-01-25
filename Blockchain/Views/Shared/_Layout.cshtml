@@ -47,8 +47,8 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (!isLoggedIn)
-                        {
+                        @*@if (!isLoggedIn)
+                        {*@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Permit" asp-action="Index">Permit Application</a>
                             </li>
@@ -61,7 +61,13 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Loan" asp-action="ShowLoans">Show Loans</a>
                             </li>
-                        }
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Estate" asp-action="Index">Properties</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Estate" asp-action="ShowOffers">Show Offers</a>
+                            </li>
+                       @* }*@
                     </ul>
                 </div>
             </div>

@@ -33,27 +33,27 @@ namespace Blockchain.Controllers
        ValueLengthLimit = int.MaxValue)]
         public IActionResult Index(string Address, decimal LoanAmount)
         {
-            Console.WriteLine("ADdress & Loan amnt: " + Address + LoanAmount);
-            //  if (property == null) { ModelState.AddModelError("Submit", "Fields cannot be empty."); return View(property); }
-            //  if (!ModelState.IsValid) { return View(property); }
-            // if (files == null || files.Length == 0) { ModelState.AddModelError("BuildingDesign", "You must upload a building design."); return View(property); }
+            if (Address == null || Address == "") { ModelState.AddModelError("Address", "Address cannot be empty."); return View(); }
+            if (LoanAmount <= 0) { ModelState.AddModelError("LoanAmount", "Loan amount must be more than $0."); }
+            if (!ModelState.IsValid) { return View(); }
             /*  var user = _context.Buyers.Where(X => X.UserID == HttpContext.Session.GetInt32(nameof(BCUser.UserID))).FirstOrDefault();
-              if(user == null)
-              {
-                  return View();
-              }*/
+            if(user == null)
+            {
+                return View();
+            }*/
             var user = _context.Buyers.FirstOrDefault();
             _context.Loans.Add(new LoanApplication { Address = Address, LoanAmount = LoanAmount, Buyer = user });
             _context.SaveChanges();
             BlockChainUtility.Use
                 (_context.Loans.OrderByDescending(x => x.BCApplicationID).FirstOrDefault());
-            ViewBag.LoanMessage = "Loan application successfully received.";
+            ViewBag.LoanMessage = $"Loan application #{_context.Loans.OrderByDescending(x => x.BCApplicationID).FirstOrDefault().BCApplicationID} successfully received.";
             ModelState.Clear();
             return View();
         }
         public IActionResult ShowLoans()
         {
             BlockChainUtility.Load();
+            BlockChainUtility.VerifyIntegrity();
             var blocks = BlockChainUtility._chain.Chain.ToList();
             List<BCApplication> apps = new();
             List<LoanApplication> loans = new();
@@ -73,8 +73,16 @@ namespace Blockchain.Controllers
                     }
 
                 }
+                foreach (var permit in apps.OfType<PermitDecision>().ToList())
+                {
+                    if (permit.Address == loanApp.Address)
+                    {
+                        loanApp.PermitStatus = permit.Approved;
+                    }
+                 }
                 loans.Add(loanApp);
             }
+           
             return View(loans);
         }
 
@@ -99,6 +107,7 @@ namespace Blockchain.Controllers
             _context.SaveChanges();
             BlockChainUtility.Use
                 (_context.LoanDecisions.OrderByDescending(x => x.BCApplicationID).FirstOrDefault());
+            BlockChainUtility.Mine();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

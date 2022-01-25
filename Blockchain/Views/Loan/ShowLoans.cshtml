@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "List of Loans";
     var approval = "";
+    var style = "";
+    var permit = "";
 }
 
 
@@ -21,6 +23,7 @@
             <th class="col">@Html.DisplayNameFor(x => x[0].Buyer.AnnualIncome)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].Address)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].LoanAmount)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].PermitStatus)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].Decision)</th>
         </tr>
         
@@ -35,15 +38,29 @@
                 <td class="col">@Html.DisplayFor(x => loan.Buyer.AnnualIncome)</td>
                 <td class="col">@Html.DisplayFor(x => loan.Address)</td>
                 <td class="col">@Html.DisplayFor(x => loan.LoanAmount)</td>
+                @if(loan.PermitStatus == null)
+                        {
+                            style = "d-none";
+                            permit = "Unconfirmed";
+                        } else if(loan.PermitStatus == false)
+                        {
+                            style = "d-none";
+                            permit = "Rejected";
+                        } else
+                        {
+                            permit = "Accepted";
+                        }
+                <td class="col">@permit</td>
                 <td class="col">
-                @{
-                    if(loan.Decision != null){
+                    @{
+                       
+                        if(loan.Decision != null){
                         approval = loan.Decision == true ? "Approved" : "Rejected";
                         @approval
                     } else
                     {
                        <div class="btn-group">
-                           <form asp-controller="Loan" asp-action="ApproveLoan" method="post" enctype="multipart/form-data">
+                           <form class="@style" asp-controller="Loan" asp-action="ApproveLoan" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="BCApplicationID" value="@loan.BCApplicationID" />
                                 <input type="hidden" name="BuyerID" value="@loan.Buyer.UserID" />
                                 <input class="btn btn-primary btn-sm" type="submit" value="Approve" />

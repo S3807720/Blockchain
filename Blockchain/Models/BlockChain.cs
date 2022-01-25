@@ -10,7 +10,7 @@ namespace Blockchain.Models
         private readonly int proofOfWorkDifficulty;
         public List<BCApplication> pendingTransactions { get; set; }
         [Required]
-        public List<Block> Chain { get; set; }
+        public List<Block> Chain { get; set; } = new List<Block>();
         public BlockChain(int difficulty)
         {
             proofOfWorkDifficulty = difficulty;
@@ -24,10 +24,7 @@ namespace Blockchain.Models
            // Chain = new List<Block> { CreateGenesisBlock() };
         }
 
-        public void InitializeChain()
-        {
-            Chain = new List<Block> { CreateGenesisBlock() };
-        }
+
         public void CreateTransaction(BCApplication transaction)
         {
             pendingTransactions.Add(transaction);
@@ -65,11 +62,21 @@ namespace Blockchain.Models
             }
             return true;
         }
-
-        private Block CreateGenesisBlock()
+        public void InitializeChain()
         {
-            return new Block(new BCApplication { BCApplicationID = 0});
+            AddGenesisBlock();
         }
+
+        public Block CreateGenesisBlock()
+        {
+            return new Block(new BCApplication { BCApplicationID = 0 }, null);
+        }
+
+        public void AddGenesisBlock()
+        {
+            Chain.Add(CreateGenesisBlock());
+        }
+
 
         [field: NonSerialized()]
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

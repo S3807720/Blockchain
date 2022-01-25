@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Blockchain.Migrations
 {
-    public partial class f : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -101,22 +101,27 @@ namespace Blockchain.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LoanAmount = table.Column<decimal>(type: "money", nullable: true),
                     Decision = table.Column<bool>(type: "bit", nullable: true),
+                    PermitStatus = table.Column<bool>(type: "bit", nullable: true),
                     LoanID = table.Column<int>(type: "int", nullable: true),
                     LoanDecision_BuyerUserID = table.Column<int>(type: "int", nullable: true),
                     Approved = table.Column<bool>(type: "bit", nullable: true),
                     PropertyID = table.Column<int>(type: "int", nullable: true),
+                    BuyerID = table.Column<int>(type: "int", nullable: true),
+                    Accepted = table.Column<bool>(type: "bit", nullable: true),
+                    PermitApplication_PropertyID = table.Column<int>(type: "int", nullable: true),
                     PermitApplication_Decision = table.Column<bool>(type: "bit", nullable: true),
-                    PermitApplication_BuyerUserID = table.Column<int>(type: "int", nullable: true),
                     PermitID = table.Column<int>(type: "int", nullable: true),
                     PermitDecision_Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PermitDecision_Approved = table.Column<bool>(type: "bit", nullable: true)
+                    PermitDecision_Approved = table.Column<bool>(type: "bit", nullable: true),
+                    PendingTransactionsID = table.Column<int>(type: "int", nullable: true),
+                    TransactionDecision_Accepted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BCApplications", x => x.BCApplicationID);
                     table.ForeignKey(
-                        name: "FK_BCApplications_Properties_PropertyID",
-                        column: x => x.PropertyID,
+                        name: "FK_BCApplications_Properties_PermitApplication_PropertyID",
+                        column: x => x.PermitApplication_PropertyID,
                         principalTable: "Properties",
                         principalColumn: "PropertyID",
                         onDelete: ReferentialAction.Cascade);
@@ -128,11 +133,6 @@ namespace Blockchain.Migrations
                     table.ForeignKey(
                         name: "FK_BCApplications_Users_LoanDecision_BuyerUserID",
                         column: x => x.LoanDecision_BuyerUserID,
-                        principalTable: "Users",
-                        principalColumn: "UserID");
-                    table.ForeignKey(
-                        name: "FK_BCApplications_Users_PermitApplication_BuyerUserID",
-                        column: x => x.PermitApplication_BuyerUserID,
                         principalTable: "Users",
                         principalColumn: "UserID");
                 });
@@ -148,14 +148,9 @@ namespace Blockchain.Migrations
                 column: "LoanDecision_BuyerUserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BCApplications_PermitApplication_BuyerUserID",
+                name: "IX_BCApplications_PermitApplication_PropertyID",
                 table: "BCApplications",
-                column: "PermitApplication_BuyerUserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BCApplications_PropertyID",
-                table: "BCApplications",
-                column: "PropertyID");
+                column: "PermitApplication_PropertyID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Logins_UserID",
