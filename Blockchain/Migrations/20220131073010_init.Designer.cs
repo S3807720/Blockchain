@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blockchain.Migrations
 {
     [DbContext(typeof(BlockchainContext))]
-    [Migration("20220125034925_init")]
+    [Migration("20220131073010_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

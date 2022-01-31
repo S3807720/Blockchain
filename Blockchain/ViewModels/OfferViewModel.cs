@@ -6,6 +6,7 @@ namespace Blockchain.Models
         public LoanDecision Loan { get; set; }
         public String Address { get; set; }
         public int PendingTransactionID { get; set; }
+        public string Status { get; set; } = "Unconfirmed";
 
     }
 }

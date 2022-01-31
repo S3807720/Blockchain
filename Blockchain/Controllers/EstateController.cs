@@ -25,6 +25,7 @@ namespace Blockchain.Controllers
         {
             BlockChainUtility.Load();
             var blocks = BlockChainUtility._chain.Chain.ToList();
+            var vm = new List<PropertyOfferViewModel>();
             List<Property> properties = new();
             List<BCApplication> apps = new();
             List<Property> props = new();
@@ -42,11 +43,38 @@ namespace Blockchain.Controllers
             {
                 if (app.Approved == true) { properties.AddRange(props.Where(x => x.Address == app.Address).ToList()); }
             }
-            foreach (var r in apps.OfType<PendingTransaction>().ToList())
+            
+            foreach(var pro in properties)
             {
-                properties.Remove(properties.Where(x => x.PropertyID == r.PropertyID).FirstOrDefault());
+                string temp = "Available";
+                foreach (var ap in apps.OfType<PendingTransaction>().ToList())
+                {
+                    if (pro.PropertyID == ap.PropertyID)
+                    {
+                        temp = "Pending";
+                        foreach (var decision in apps.OfType<TransactionDecision>().ToList())
+                        {
+                            if (ap.BCApplicationID == decision.PendingTransactionsID)
+                            {
+                                temp = decision.Accepted == true ? "Accepted" : "Rejected";
+
+                            }
+                        }
+                    }
+                  
+                }
+                vm.Add(new PropertyOfferViewModel
+                {
+                    PropertyID = pro.PropertyID,
+                    Address = pro.Address,
+                    BuildingName = pro.BuildingDesign.Name,
+                    OwnerDetails = pro.OwnerDetails,
+                    SellerLicense = pro.SellerLicense,
+                    Price = pro.Price,
+                    Status = temp
+                });
             }
-            return View(properties);
+            return View(vm);
         }
 
         public IActionResult Offer(int PropertyID, int BuyerID)
@@ -54,7 +82,7 @@ namespace Blockchain.Controllers
             BlockChainUtility.Load();
             _context.PendingTransactions.Add(new PendingTransaction { BuyerID = BuyerID, PropertyID = PropertyID });
             _context.SaveChanges();
-            ViewBag.Offer = $"Offer for {PropertyID} successfully sent.";
+           // ViewBag.Offer = $"Offer for {PropertyID} successfully sent.";
             BlockChainUtility.Use
             (_context.PendingTransactions.OrderByDescending(x => x.BCApplicationID).FirstOrDefault());
             return RedirectToAction("Index");
@@ -89,17 +117,31 @@ namespace Blockchain.Controllers
                 }
                 if (app.Accepted == null) { offers.Add(app); }
             }
-
-            foreach(var off in offers)
+            foreach (var off in offers)
             {
                 string addr = properties.Where(x => x.PropertyID == off.PropertyID).FirstOrDefault().Address;
-                var LoanID = apps.OfType<LoanApplication>().Where(x => x.Buyer.UserID == off.BuyerID && 
+                var loanAps = apps.OfType<LoanApplication>();
+                var loanDecs = apps.OfType<LoanDecision>();
+                if (loanAps.Any())
+                {
+                    var LoanID = loanAps.Where(x => x.Buyer.UserID == off.BuyerID &&
                     x.Address == addr).FirstOrDefault().BCApplicationID;
-                vm.Add(new OfferViewModel { Buyers = _context.Buyers.Where(x => x.UserID == off.BuyerID).FirstOrDefault().Name,
-                    Address = addr,
-                    Loan = apps.OfType<LoanDecision>().Where(x => x.LoanID == LoanID).FirstOrDefault(),
-                    PendingTransactionID = off.BCApplicationID
-                });
+
+                    var loan = loanDecs.Where(x => x.LoanID == LoanID).FirstOrDefault();
+                    if(loan != null)
+                    {
+                        vm.Add(new OfferViewModel
+                        {
+                            Buyers = _context.Buyers.Where(x => x.UserID == off.BuyerID).FirstOrDefault().Name,
+                            Address = addr,
+                            Loan = loan,
+                            PendingTransactionID = off.BCApplicationID,
+                            Status = loan.Approved == true ? "Approved" : "Rejected"
+                        });
+                    }
+                
+                }
+                
             }
             return View(vm);
         }

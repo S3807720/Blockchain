@@ -1,4 +1,4 @@
-﻿@model List<Property>
+﻿@model List<PropertyOfferViewModel>
 @{
     ViewData["Title"] = "Properties";
 }
@@ -15,9 +15,10 @@
         <tr class="row justify-content-md-center text-white">
             <th class="col">@Html.DisplayNameFor(x => x[0].Address)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].OwnerDetails)</th>
-            <th class="col">@Html.DisplayNameFor(x => x[0].BuildingDesign.Name)</th>
+            <th class="col">@Html.DisplayNameFor(x => x[0].BuildingName)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].SellerLicense)</th>
             <th class="col">@Html.DisplayNameFor(x => x[0].Price)</th>
+             <th class="col">@Html.DisplayNameFor(x => x[0].Status)</th>
             <th class="col"></th>
         </tr>
         
@@ -26,11 +27,12 @@
             <tr class="row justify-content-md-center text-white">
                 <td class="col">@Html.DisplayFor(x => prop.Address)</td>
                 <td class="col">@Html.DisplayFor(x => prop.OwnerDetails)</td>
-                <td class="col">@Html.DisplayFor(x => prop.BuildingDesign.Name)</td>
+                <td class="col">@Html.DisplayFor(x => prop.BuildingName)</td>
                 <td class="col">@Html.DisplayFor(x => prop.SellerLicense)</td>
                 <td class="col">@Html.DisplayFor(x => prop.Price)</td>
+                <td class="col">@Html.DisplayFor(x => prop.Status)</td>
                 <td class="col">
-                @{
+                @if(prop.Status == "Available") {
                     <div class="btn-group">
                         <form asp-controller="Estate" asp-action="Offer" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="PropertyID" value="@prop.PropertyID" />

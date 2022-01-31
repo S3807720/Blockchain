@@ -1,7 +1,6 @@
 ﻿@model List<OfferViewModel>
 @{
     ViewData["Title"] = "List of Offers";
-    var approval = "";
 }
 
 
@@ -24,25 +23,19 @@
             <tr class="row justify-content-md-center text-white">
                 <td class="col">@Html.DisplayFor(x => loan.Buyers)</td>
                 <td class="col">@Html.DisplayFor(x => loan.Address)</td>
+                <td class="col">@Html.DisplayFor(x => loan.Status)</td>
                 <td class="col">
-                    @{
-                        if(loan.Loan.Approved != null){
-                            approval = loan.Loan.Approved == true ? "Approved" : "Rejected";
-
-                        } else
-                        {
-                            approval = "Unconfirmed";
-                        }
-                    @approval
-                }
-                </td>
-                <td class="col">
-                   <div class="btn-group">
+                     <div class="btn-group">
+                    @if(loan.Status == "Approved")
+                    {
+                        
                         <form asp-controller="Estate" asp-action="AcceptOffer" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="BCApplicationID" value="@loan.PendingTransactionID" />
                             <input class="btn btn-primary btn-sm" type="submit" value="Approve" />
                         </form>
-                        <form asp-controller="Estate" asp-action="RejectOffer" method="post" enctype="multipart/form-data">
+                      
+                    }
+                     <form asp-controller="Estate" asp-action="RejectOffer" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="BCApplicationID" value="@loan.PendingTransactionID" />
                             <input class="btn btn-primary btn-sm" type="submit" value="Reject" />
                         </form>
